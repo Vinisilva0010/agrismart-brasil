@@ -12,7 +12,7 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Build args para variáveis de ambiente do Vite
+# Build args para variáveis de ambiente do Vite  
 ARG VITE_BACKEND_URL=https://agrismart-backend-305905232437.southamerica-east1.run.app
 ARG VITE_ENV=production
 

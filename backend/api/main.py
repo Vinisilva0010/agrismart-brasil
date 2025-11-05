@@ -22,11 +22,18 @@ app = FastAPI(
     redoc_url="/api/redoc",
 )
 
-# Configure CORS
+# Configure CORS - Permitir frontend em produção e desenvolvimento
+cors_origins = os.getenv("CORS_ORIGINS", "*")
+if cors_origins == "*":
+    # Em produção sem CORS_ORIGINS configurado, permitir tudo
+    allowed_origins = ["*"]
+else:
+    allowed_origins = cors_origins.split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials=False if "*" in allowed_origins else True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
