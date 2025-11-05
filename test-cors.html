@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste CORS - AgriSmart Brasil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        button {
+            background: #16a34a;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #15803d;
+        }
+        #result {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            border: 1px solid #334155;
+        }
+        .success { color: #22c55e; }
+        .error { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste de CORS - AgriSmart Brasil</h1>
+    
+    <h3>Backend URL:</h3>
+    <p>https://agrismart-backend-305905232437.southamerica-east1.run.app</p>
+    
+    <button onclick="testHealth()">1. Testar Health Check</button>
+    <button onclick="testAgents()">2. Listar Agentes</button>
+    <button onclick="testChat()">3. Testar Chat</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const BACKEND_URL = 'https://agrismart-backend-305905232437.southamerica-east1.run.app';
+        
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = isError ? 'error' : 'success';
+            resultDiv.textContent = message;
+        }
+        
+        async function testHealth() {
+            showResult('Testando health check...');
+            try {
+                const response = await fetch(`${BACKEND_URL}/health`);
+                const data = await response.json();
+                showResult('✅ Health Check OK!\n\n' + JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResult('❌ Erro: ' + error.message, true);
+            }
+        }
+        
+        async function testAgents() {
+            showResult('Testando listagem de agentes...');
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/agents`);
+                const data = await response.json();
+                showResult('✅ Agentes OK!\n\n' + JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResult('❌ Erro: ' + error.message, true);
+            }
+        }
+        
+        async function testChat() {
+            showResult('Testando chat com Farm Manager...');
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/farm/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: "Qual a melhor época para plantar soja?",
+                        context: {
+                            location: "São Paulo, Brasil",
+                            crops: ["Soja"],
+                            season: "Safra 2024/2025"
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult('✅ Chat OK!\n\n' + JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResult('❌ Erro CORS ou Conexão:\n\n' + error.message + '\n\nVerifique se CORS_ORIGINS está configurado no backend!', true);
+            }
+        }
+    </script>
+</body>
+</html>
+

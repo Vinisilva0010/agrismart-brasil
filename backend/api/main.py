@@ -23,19 +23,14 @@ app = FastAPI(
 )
 
 # Configure CORS - Permitir frontend em produção e desenvolvimento
-cors_origins = os.getenv("CORS_ORIGINS", "*")
-if cors_origins == "*":
-    # Em produção sem CORS_ORIGINS configurado, permitir tudo
-    allowed_origins = ["*"]
-else:
-    allowed_origins = cors_origins.split(",")
-
+# Para hackathon/demo, permitimos todas as origens
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=False if "*" in allowed_origins else True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["*"],  # Permite todas as origens
+    allow_credentials=False,  # Deve ser False quando allow_origins=["*"]
+    allow_methods=["*"],  # Permite todos os métodos (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],  # Permite todos os headers
+    expose_headers=["*"],  # Expõe todos os headers na resposta
 )
 
 # Include routers
