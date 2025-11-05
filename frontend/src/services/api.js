@@ -282,12 +282,22 @@ export const farmAPI = {
   },
   
   // Chat com agentes (PRINCIPAL)
-  chat: async (query, context) => {
-    return fetchAPI('/api/farm/query', {
-      method: 'POST',
-      body: JSON.stringify({ query, context }),
-    })
-  },
+chat: async (query, context) => {
+  return fetchAPI('/api/farm/query', {
+    method: 'POST',
+    body: JSON.stringify({ 
+      query: query,
+      context: context || {
+        location: 'Cascavel, PR',
+        farm_size: '500 hectares',
+        crops: ['soja', 'milho'],
+        crop_stage: 'floração'
+      }
+    }),
+  })
+},
+
+
   
   // Criar plano de ação
   createActionPlan: async (goal, timeframe, farmStatus, constraints = null) => {

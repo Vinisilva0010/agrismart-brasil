@@ -16,22 +16,21 @@ load_dotenv()
 # Create FastAPI app
 app = FastAPI(
     title="AgriSmart Brasil API",
-    description="Multi-Agent System for Smart Agriculture using Google ADK",
-    version="1.0.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
+    description="Sistema Multi-Agente para Agricultura Inteligente",
+    version="1.0.0"
 )
 
-# Configure CORS - Permitir frontend em produção e desenvolvimento
-# Para hackathon/demo, permitimos todas as origens
+# ========== CORS CONFIGURATION (CRÍTICO!) ==========
+# IMPORTANTE: allow_credentials DEVE ser False quando allow_origins=["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permite todas as origens
-    allow_credentials=False,  # Deve ser False quando allow_origins=["*"]
-    allow_methods=["*"],  # Permite todos os métodos (GET, POST, OPTIONS, etc.)
+    allow_origins=["*"],  # Permite TODAS as origens
+    allow_credentials=False,  # OBRIGATÓRIO: False quando usa ["*"]
+    allow_methods=["*"],  # Permite todos os métodos (GET, POST, OPTIONS, etc)
     allow_headers=["*"],  # Permite todos os headers
-    expose_headers=["*"],  # Expõe todos os headers na resposta
+    expose_headers=["*"]  # Expõe todos os headers na resposta
 )
+
 
 # Include routers
 app.include_router(router, prefix="/api")
@@ -72,10 +71,22 @@ async def options_handler(full_path: str):
         status_code=200,
         headers={
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
             "Access-Control-Allow-Headers": "*",
+            "Access-Control-Max-Age": "3600",
         }
     )
+
+
+# Adicionar middleware adicional para garantir CORS em todas as respostas
+@app.middleware("http")
+async def add_cors_header(request, call_next):
+    """Adiciona headers CORS em todas as respostas."""
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
 
 if __name__ == "__main__":
