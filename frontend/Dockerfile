@@ -7,10 +7,21 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY . .
+
+# Build args para variáveis de ambiente do Vite
+ARG VITE_BACKEND_URL=https://agrismart-backend-305905232437.southamerica-east1.run.app
+ARG VITE_ENV=production
+
+# Definir as variáveis de ambiente para o build
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+ENV VITE_ENV=${VITE_ENV}
+
+# Fix permissions for node_modules binaries
+RUN chmod -R +x node_modules/.bin
 
 # Build the app
 RUN npm run build
@@ -33,4 +44,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
-
