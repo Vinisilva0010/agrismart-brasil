@@ -46,7 +46,7 @@ async function fetchAPI(endpoint, options = {}) {
 /**
  * ===== CLIMATE MONITOR APIs =====
  */
-export const climate API = {
+export const climateAPI = {
   // Analisar clima
   analyze: async (location, climateData) => {
     return fetchAPI('/api/climate/analyze', {
