@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { farmAPI } from '../services/api'
 
 const Dashboard = ({ farmData }) => {
   const [loading, setLoading] = useState(false)
@@ -7,22 +8,13 @@ const Dashboard = ({ farmData }) => {
   const getDailyBriefing = async () => {
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:8080/api/farm/daily-briefing', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          farm_data: {
-            ...farmData,
-            date: new Date().toISOString().split('T')[0],
-            season: 'Verão 2025',
-            pending_tasks: 'Irrigação, Monitoramento de pragas',
-            alerts: 'Temperatura elevada',
-          },
-        }),
+      const data = await farmAPI.getDailyBriefing({
+        ...farmData,
+        date: new Date().toISOString().split('T')[0],
+        season: 'Verão 2025',
+        pending_tasks: 'Irrigação, Monitoramento de pragas',
+        alerts: 'Temperatura elevada',
       })
-      const data = await response.json()
       setBriefing(data)
     } catch (error) {
       console.error('Error fetching briefing:', error)

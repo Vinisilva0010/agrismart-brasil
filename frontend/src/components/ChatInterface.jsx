@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { farmAPI } from '../services/api'
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([
@@ -29,22 +30,11 @@ const ChatInterface = () => {
     setLoading(true)
 
     try {
-      const response = await fetch('http://localhost:8080/api/farm/query', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: userMessage,
-          context: {
-            location: 'São Paulo, Brasil',
-            crops: ['Soja', 'Milho', 'Café'],
-            season: 'Verão 2025',
-          },
-        }),
+      const data = await farmAPI.chat(userMessage, {
+        location: 'São Paulo, Brasil',
+        crops: ['Soja', 'Milho', 'Café'],
+        season: 'Verão 2025',
       })
-
-      const data = await response.json()
 
       // Formatar a resposta se vier como JSON
       let formattedContent = data.response || 'Desculpe, ocorreu um erro ao processar sua solicitação.'

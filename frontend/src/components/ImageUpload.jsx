@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { cropAPI } from '../services/api'
 
 const ImageUpload = () => {
   const [selectedImage, setSelectedImage] = useState(null)
@@ -29,16 +30,7 @@ const ImageUpload = () => {
     setAnalysis(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', selectedImage)
-      formData.append('crop_type', cropType)
-
-      const response = await fetch('http://localhost:8080/api/crop/upload-image', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
+      const data = await cropAPI.uploadImage(selectedImage, cropType)
       setAnalysis(data)
     } catch (error) {
       console.error('Error analyzing image:', error)

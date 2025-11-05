@@ -43,6 +43,20 @@ class WeatherImpactRequest(BaseModel):
     crop_stage: str
 
 
+class FrostRiskRequest(BaseModel):
+    location: str
+    min_temp_forecast: float
+    crop_stage: str
+    crop_type: str = "Soja"
+
+
+class DroughtAssessmentRequest(BaseModel):
+    location: str
+    rainfall_history: List[float]
+    soil_moisture: float
+    crop_type: str = "Soja"
+
+
 class CropImageAnalysisRequest(BaseModel):
     image_data: str
     crop_type: str
@@ -181,6 +195,39 @@ async def predict_weather_impact(request: WeatherImpactRequest):
         result = await climate_agent.predict_weather_impact(
             forecast_data=request.forecast_data,
             crop_stage=request.crop_stage
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/weather/frost-risk")
+async def assess_frost_risk(request: FrostRiskRequest):
+    """
+    Avaliar risco de geada para culturas.
+    Endpoint crítico para agricultura brasileira.
+    """
+    try:
+        result = await climate_agent.get_frost_risk(
+            location=request.location,
+            min_temp_forecast=request.min_temp_forecast,
+            crop_stage=request.crop_stage,
+            crop_type=request.crop_type
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/climate/drought-assessment")
+async def assess_drought(request: DroughtAssessmentRequest):
+    """Avaliar condições de seca e impactos nas culturas."""
+    try:
+        result = await climate_agent.drought_assessment(
+            location=request.location,
+            rainfall_history=request.rainfall_history,
+            soil_moisture=request.soil_moisture,
+            crop_type=request.crop_type
         )
         return result
     except Exception as e:

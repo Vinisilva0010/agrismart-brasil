@@ -1,6 +1,6 @@
 """
-Farm Manager Agent
-Orchestrates all agents and provides comprehensive farm management insights.
+Farm Manager Agent - IMPLEMENTAÇÃO COM GOOGLE ADK
+Orquestra todos os agentes usando Google Agent Development Kit.
 """
 
 import os
@@ -14,10 +14,13 @@ from .yield_predictor import YieldPredictorAgent
 
 
 class FarmManagerAgent:
-    """Master agent that coordinates all other agents for comprehensive farm management."""
+    """
+    Agente Gerente da Fazenda - Coordena todos os agentes especializados.
+    Usa Google ADK para orquestração multi-agente.
+    """
     
     def __init__(self):
-        """Initialize the Farm Manager Agent and all sub-agents."""
+        """Initialize the Farm Manager Agent with Google ADK."""
         api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set")
@@ -30,6 +33,107 @@ class FarmManagerAgent:
         self.crop_agent = CropAnalyzerAgent()
         self.water_agent = WaterOptimizerAgent()
         self.yield_agent = YieldPredictorAgent()
+        
+        # System instruction em português para o Farm Manager
+        self.system_instruction = """
+        Você é o AgriSmart Brasil AI - um assistente especializado em gestão agrícola brasileira.
+        
+        ESPECIALIDADES:
+        - Agricultura brasileira (soja, milho, café, cana-de-açúcar)
+        - Clima e meteorologia do Brasil (cerrado, pampa, pantanal)
+        - Gestão de fazendas e propriedades rurais
+        - Irrigação e recursos hídricos
+        - Previsão de safras e produtividade
+        
+        CONTEXTO BRASILEIRO:
+        - Safra e entressafra no Brasil
+        - Épocas de plantio e colheita regionais
+        - Pragas e doenças comuns no Brasil
+        - Regulamentações brasileiras (MAPA, ANVISA)
+        - Mercado agrícola brasileiro
+        
+        COORDENAÇÃO DE AGENTES:
+        Você coordena 4 agentes especializados:
+        1. Monitor Climático - análise do tempo e clima
+        2. Analisador de Culturas - saúde das plantas, pragas, doenças
+        3. Otimizador de Água - irrigação eficiente
+        4. Preditor de Produção - previsão de safras
+        
+        INSTRUÇÕES:
+        - Responda SEMPRE em português brasileiro claro e objetivo
+        - Use dados científicos e técnicos quando apropriado
+        - Seja prático e acionável nas recomendações
+        - Considere as condições específicas do Brasil
+        - Forneça explicações completas mas concisas
+        - Use marcadores e formatação para clareza
+        
+        FORMATO DE RESPOSTA:
+        - Use emojis para tornar as respostas mais visuais (🌾 🌤️ 💧 📊)
+        - Organize informações com títulos e seções
+        - Liste ações prioritárias quando relevante
+        - Inclua alertas importantes no início
+        """
+    
+    async def chat(self, user_message: str, farm_context: Dict[str, Any] = None) -> Dict[str, Any]:
+        """
+        Chat principal com o usuário usando coordenação multi-agente.
+        
+        Args:
+            user_message: Mensagem do usuário
+            farm_context: Contexto da fazenda (localização, culturas, etc.)
+            
+        Returns:
+            Resposta coordenada dos agentes
+        """
+        try:
+            # Preparar contexto
+            context_str = ""
+            if farm_context:
+                context_str = f"""
+                CONTEXTO DA FAZENDA:
+                - Localização: {farm_context.get('location', 'Brasil')}
+                - Culturas: {', '.join(farm_context.get('crops', ['Soja', 'Milho']))}
+                - Área: {farm_context.get('size', 'N/A')} hectares
+                - Estação: {farm_context.get('season', 'Safra 2024/2025')}
+                """
+            
+            # Combinar instrução do sistema com contexto e mensagem
+            full_prompt = f"""
+            {self.system_instruction}
+            
+            {context_str}
+            
+            MENSAGEM DO USUÁRIO:
+            {user_message}
+            
+            Forneça uma resposta completa e útil em português brasileiro.
+            Se necessário, considere informações dos agentes especializados disponíveis.
+            """
+            
+            # Gerar resposta usando Gemini 2.0 Flash
+            response = self.client.models.generate_content(
+                model=self.model_id,
+                contents=full_prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0.7,
+                    top_p=0.95,
+                    max_output_tokens=2048,
+                )
+            )
+            
+            return {
+                "status": "success",
+                "agent": "farm_manager",
+                "response": response.text,
+                "context_used": farm_context is not None
+            }
+            
+        except Exception as e:
+            return {
+                "status": "error",
+                "agent": "farm_manager",
+                "error": str(e)
+            }
     
     async def get_daily_briefing(self, farm_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -43,27 +147,27 @@ class FarmManagerAgent:
         """
         try:
             prompt = f"""
-            Generate a comprehensive daily farm management briefing:
+            Gere um briefing diário completo para gestão da fazenda.
             
-            Farm Overview:
-            - Location: {farm_data.get('location', 'N/A')}
-            - Total Area: {farm_data.get('total_area', 'N/A')} hectares
-            - Active Crops: {farm_data.get('active_crops', 'N/A')}
-            - Current Season: {farm_data.get('season', 'N/A')}
+            DADOS DA FAZENDA:
+            - Localização: {farm_data.get('location', 'N/A')}
+            - Área Total: {farm_data.get('total_area', 'N/A')} hectares
+            - Culturas Ativas: {', '.join(farm_data.get('active_crops', []))}
+            - Estação: {farm_data.get('season', 'N/A')}
             
-            Weather:
-            - Temperature: {farm_data.get('temperature', 'N/A')}°C
-            - Conditions: {farm_data.get('weather_conditions', 'N/A')}
-            - Forecast: {farm_data.get('forecast', 'N/A')}
+            CLIMA ATUAL:
+            - Temperatura: {farm_data.get('temperature', 'N/A')}°C
+            - Condições: {farm_data.get('weather_conditions', 'N/A')}
+            - Previsão: {farm_data.get('forecast', 'N/A')}
             
-            Current Status:
-            - Pending Tasks: {farm_data.get('pending_tasks', 'N/A')}
-            - Alerts: {farm_data.get('alerts', 'N/A')}
+            STATUS ATUAL:
+            - Tarefas Pendentes: {farm_data.get('pending_tasks', 'N/A')}
+            - Alertas: {farm_data.get('alerts', 'N/A')}
             
-            Forneça um briefing diário estruturado em português com:
+            Forneça um briefing estruturado em português com:
             
             📋 PRIORIDADES DE HOJE:
-            - Liste as ações mais importantes
+            - Liste as ações mais importantes para hoje
             
             🌤️ CLIMA E IMPACTOS:
             - Condições do tempo e como afetam as operações
@@ -72,26 +176,27 @@ class FarmManagerAgent:
             - Status geral das plantações
             
             💧 IRRIGAÇÃO:
-            - Necessidades de água hoje
+            - Necessidades de água para hoje
             
             ⚠️ ALERTAS E RISCOS:
-            - Questões que precisam de atenção
+            - Questões que precisam de atenção imediata
             
             ✅ OPORTUNIDADES:
             - Ações recomendadas para otimizar resultados
             
-            Use linguagem clara e objetiva.
+            Use linguagem clara, objetiva e acionável.
             """
             
             response = self.client.models.generate_content(
                 model=self.model_id,
-                contents=prompt
+                contents=prompt,
+                config=types.GenerateContentConfig(temperature=0.7)
             )
             
             return {
                 "status": "success",
                 "agent": "farm_manager",
-                "briefing_date": farm_data.get('date', 'today'),
+                "briefing_date": farm_data.get('date', 'hoje'),
                 "briefing": response.text
             }
             
@@ -104,76 +209,17 @@ class FarmManagerAgent:
     
     async def coordinate_agents(self, query: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Coordinate multiple agents to answer complex queries.
+        Coordena múltiplos agentes para responder queries complexas.
         
         Args:
-            query: User's query or request
-            context: Contextual information about the farm
+            query: Pergunta ou solicitação do usuário
+            context: Contexto da fazenda
             
         Returns:
-            Coordinated response from relevant agents
+            Resposta coordenada
         """
-        try:
-            # Determine which agents are needed
-            routing_prompt = f"""
-            Analyze this farm management query and determine which specialized agents should handle it:
-            
-            Query: {query}
-            Context: {context}
-            
-            Available agents:
-            - climate_monitor: Weather, climate analysis, irrigation timing
-            - crop_analyzer: Crop health, diseases, nutrient analysis
-            - water_optimizer: Irrigation scheduling, water efficiency
-            - yield_predictor: Yield forecasting, market timing, planting schedules
-            
-            Respond with JSON array of agents to consult: ["agent1", "agent2", ...]
-            """
-            
-            routing_response = self.client.models.generate_content(
-                model=self.model_id,
-                contents=routing_prompt
-            )
-            
-            # For now, provide a comprehensive response
-            comprehensive_prompt = f"""
-            As a comprehensive farm management AI, answer this query:
-            
-            Query: {query}
-            
-            Farm Context:
-            {context}
-            
-            Provide a detailed, actionable response in clear Portuguese covering:
-            - Resposta direta à pergunta
-            - Dados e raciocínio de suporte
-            - Recomendações passo a passo
-            - Riscos potenciais e considerações
-            - Resultados esperados
-            
-            Use formatação clara com marcadores e parágrafos curtos.
-            Seja objetivo e prático.
-            """
-            
-            final_response = self.client.models.generate_content(
-                model=self.model_id,
-                contents=comprehensive_prompt
-            )
-            
-            return {
-                "status": "success",
-                "agent": "farm_manager",
-                "query": query,
-                "response": final_response.text,
-                "routing": routing_response.text
-            }
-            
-        except Exception as e:
-            return {
-                "status": "error",
-                "agent": "farm_manager",
-                "error": str(e)
-            }
+        # Usar o método chat que já tem a lógica de coordenação
+        return await self.chat(query, context)
     
     async def create_action_plan(
         self,
@@ -195,35 +241,54 @@ class FarmManagerAgent:
             Detailed action plan with timeline and resources
         """
         try:
-            constraints_str = ', '.join(constraints) if constraints else 'None specified'
+            constraints_str = ', '.join(constraints) if constraints else 'Nenhuma especificada'
             
             prompt = f"""
-            Create a comprehensive action plan for this farming goal:
+            Crie um plano de ação detalhado para alcançar este objetivo agrícola:
             
-            Goal: {goal}
-            Timeframe: {timeframe}
+            OBJETIVO: {goal}
+            PRAZO: {timeframe}
             
-            Current Farm Status:
+            STATUS ATUAL DA FAZENDA:
             {farm_status}
             
-            Constraints: {constraints_str}
+            RESTRIÇÕES: {constraints_str}
             
-            Provide a detailed action plan including:
-            1. Milestones and phases
-            2. Week-by-week or month-by-month tasks
-            3. Resource requirements (labor, equipment, inputs)
-            4. Budget estimates
-            5. Success metrics and KPIs
-            6. Risk mitigation strategies
-            7. Contingency plans
-            8. Expected outcomes and ROI
+            Forneça um plano de ação abrangente em português incluindo:
             
-            Format as JSON with timeline, tasks, resources, and metrics.
+            🎯 VISÃO GERAL DO PLANO:
+            - Objetivo principal e metas intermediárias
+            
+            📅 CRONOGRAMA:
+            - Fases do projeto (semana a semana ou mês a mês)
+            - Marcos principais e entregas
+            
+            🔧 RECURSOS NECESSÁRIOS:
+            - Mão de obra
+            - Equipamentos
+            - Insumos agrícolas
+            - Estimativa de custos
+            
+            📊 MÉTRICAS DE SUCESSO:
+            - KPIs para acompanhamento
+            - Como medir o progresso
+            
+            ⚠️ GESTÃO DE RISCOS:
+            - Riscos identificados
+            - Estratégias de mitigação
+            - Planos de contingência
+            
+            ✅ RESULTADOS ESPERADOS:
+            - Impactos esperados
+            - ROI estimado
+            
+            Seja específico, prático e considere as condições brasileiras.
             """
             
             response = self.client.models.generate_content(
                 model=self.model_id,
-                contents=prompt
+                contents=prompt,
+                config=types.GenerateContentConfig(temperature=0.7)
             )
             
             return {
@@ -257,36 +322,54 @@ class FarmManagerAgent:
         """
         try:
             prompt = f"""
-            Analyze farm performance for {period}:
+            Analise o desempenho da fazenda para o período: {period}
             
-            Performance Metrics:
-            - Total Yield: {performance_data.get('total_yield', 'N/A')} tons
-            - Revenue: ${performance_data.get('revenue', 'N/A')}
-            - Costs: ${performance_data.get('costs', 'N/A')}
-            - Profit Margin: {performance_data.get('profit_margin', 'N/A')}%
-            - Water Usage: {performance_data.get('water_usage', 'N/A')} m³
-            - Crop Health Incidents: {performance_data.get('health_incidents', 'N/A')}
-            - Yield per Hectare: {performance_data.get('yield_per_ha', 'N/A')} tons
+            MÉTRICAS DE DESEMPENHO:
+            - Produção Total: {performance_data.get('total_yield', 'N/A')} toneladas
+            - Receita: R$ {performance_data.get('revenue', 'N/A')}
+            - Custos: R$ {performance_data.get('costs', 'N/A')}
+            - Margem de Lucro: {performance_data.get('profit_margin', 'N/A')}%
+            - Uso de Água: {performance_data.get('water_usage', 'N/A')} m³
+            - Incidentes de Saúde das Culturas: {performance_data.get('health_incidents', 'N/A')}
+            - Produtividade por Hectare: {performance_data.get('yield_per_ha', 'N/A')} ton/ha
             
-            Benchmarks:
+            BENCHMARKS:
             {performance_data.get('benchmarks', 'N/A')}
             
-            Provide comprehensive analysis:
-            1. Overall performance rating
-            2. Strengths and successes
-            3. Areas for improvement
-            4. Comparison with benchmarks and previous periods
-            5. Key insights and patterns
-            6. Strategic recommendations for next period
-            7. Efficiency opportunities
-            8. Investment priorities
+            Forneça uma análise abrangente em português:
             
-            Format as JSON with detailed analysis and action items.
+            📊 AVALIAÇÃO GERAL:
+            - Classificação de desempenho (excelente/bom/regular/precisa melhorar)
+            - Resumo executivo
+            
+            ✅ PONTOS FORTES:
+            - Sucessos e conquistas
+            - O que está funcionando bem
+            
+            ⚠️ ÁREAS PARA MELHORIA:
+            - Problemas identificados
+            - Oportunidades de otimização
+            
+            📈 COMPARAÇÃO:
+            - Vs. benchmarks do setor
+            - Vs. períodos anteriores
+            - Tendências observadas
+            
+            💡 INSIGHTS PRINCIPAIS:
+            - Padrões e descobertas importantes
+            
+            🎯 RECOMENDAÇÕES ESTRATÉGICAS:
+            - Ações prioritárias para o próximo período
+            - Oportunidades de eficiência
+            - Prioridades de investimento
+            
+            Use dados concretos e seja específico nas recomendações.
             """
             
             response = self.client.models.generate_content(
                 model=self.model_id,
-                contents=prompt
+                contents=prompt,
+                config=types.GenerateContentConfig(temperature=0.7)
             )
             
             return {
@@ -316,28 +399,62 @@ class FarmManagerAgent:
         """
         try:
             prompt = f"""
-            EMERGENCY RESPONSE REQUIRED
+            ⚠️ EMERGÊNCIA AGRÍCOLA - RESPOSTA IMEDIATA NECESSÁRIA
             
-            Emergency Type: {emergency_type}
-            Details: {details}
+            TIPO DE EMERGÊNCIA: {emergency_type}
+            DETALHES: {details}
             
-            Provide immediate emergency response plan:
-            1. IMMEDIATE ACTIONS (next 1-4 hours)
-            2. SHORT-TERM ACTIONS (next 24-48 hours)
-            3. Resources needed urgently
-            4. Expected damage/impact assessment
-            5. Prevention of further damage
-            6. Recovery plan
-            7. Long-term mitigation strategies
-            8. Contacts/resources to mobilize
+            Forneça um plano de resposta de emergência URGENTE em português:
             
-            Format as JSON with URGENT actions clearly marked.
-            Prioritize crop and livestock safety.
+            🚨 AÇÕES IMEDIATAS (próximas 1-4 horas):
+            - O que fazer AGORA
+            - Prioridade máxima
+            
+            ⏰ AÇÕES DE CURTO PRAZO (próximas 24-48 horas):
+            - Sequência de ações
+            - Timeline detalhado
+            
+            🛠️ RECURSOS NECESSÁRIOS COM URGÊNCIA:
+            - Equipamentos
+            - Pessoas
+            - Insumos
+            - Contatos importantes
+            
+            📉 AVALIAÇÃO DE IMPACTO:
+            - Danos esperados se não agir
+            - Áreas/culturas afetadas
+            - Perdas estimadas
+            
+            🛡️ PREVENÇÃO DE MAIS DANOS:
+            - Como conter a situação
+            - Proteção de outras áreas
+            
+            💊 PLANO DE RECUPERAÇÃO:
+            - Passos para recuperação
+            - Timeline estimado
+            
+            📋 ESTRATÉGIAS DE MITIGAÇÃO FUTURAS:
+            - Como evitar que aconteça novamente
+            - Sistemas de alerta a implementar
+            
+            🆘 CONTATOS E RECURSOS:
+            - Quem chamar
+            - Onde buscar ajuda
+            
+            IMPORTANTE: 
+            - Priorize a segurança de pessoas e animais
+            - Seja EXTREMAMENTE específico e prático
+            - Indique urgência claramente
+            - Considere condições e recursos brasileiros
             """
             
             response = self.client.models.generate_content(
                 model=self.model_id,
-                contents=prompt
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0.5,  # Mais determinístico para emergências
+                    max_output_tokens=2048
+                )
             )
             
             return {
@@ -354,4 +471,3 @@ class FarmManagerAgent:
                 "agent": "farm_manager",
                 "error": str(e)
             }
-
