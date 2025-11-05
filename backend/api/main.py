@@ -4,8 +4,9 @@ Multi-Agent System for Smart Agriculture
 """
 
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from dotenv import load_dotenv
 
 from .routes import router
@@ -20,19 +21,55 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ========== CORS CONFIGURATION (CRÍTICO!) ==========
-# IMPORTANTE: allow_credentials DEVE ser False quando allow_origins=["*"]
+# ========== MIDDLEWARE HTTP PARA CORS (PRIMEIRO!) ==========
+@app.middleware("http")
+async def cors_middleware(request: Request, call_next):
+    """Middleware para adicionar headers CORS em TODAS as requisições."""
+    # Handle preflight OPTIONS requests
+    if request.method == "OPTIONS":
+        response = Response()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Max-Age"] = "3600"
+        return response
+    
+    # Process normal requests
+    response = await call_next(request)
+    
+    # Add CORS headers to all responses
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Expose-Headers"] = "*"
+    
+    return response
+
+# ========== CORS MIDDLEWARE (SEGUNDO!) ==========
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permite TODAS as origens
-    allow_credentials=False,  # OBRIGATÓRIO: False quando usa ["*"]
-    allow_methods=["*"],  # Permite todos os métodos (GET, POST, OPTIONS, etc)
-    allow_headers=["*"],  # Permite todos os headers
-    expose_headers=["*"]  # Expõe todos os headers na resposta
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
 )
 
+# ========== OPTIONS HANDLER PARA TODAS AS ROTAS ==========
+@app.options("/{full_path:path}")
+async def options_handler(full_path: str):
+    """Handle OPTIONS requests for CORS preflight."""
+    return Response(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Max-Age": "3600",
+        }
+    )
 
-# Include routers
+# Include routers AFTER CORS setup
 app.include_router(router, prefix="/api")
 
 
@@ -63,32 +100,6 @@ async def health_check():
     }
 
 
-@app.options("/{full_path:path}")
-async def options_handler(full_path: str):
-    """Handle OPTIONS requests for CORS preflight."""
-    from fastapi.responses import Response
-    return Response(
-        status_code=200,
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Max-Age": "3600",
-        }
-    )
-
-
-# Adicionar middleware adicional para garantir CORS em todas as respostas
-@app.middleware("http")
-async def add_cors_header(request, call_next):
-    """Adiciona headers CORS em todas as respostas."""
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    return response
-
-
 if __name__ == "__main__":
     import uvicorn
     
@@ -99,4 +110,3 @@ if __name__ == "__main__":
         port=port,
         reload=True
     )
-

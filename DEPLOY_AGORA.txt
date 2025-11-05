@@ -1,0 +1,52 @@
+🚀 DEPLOY FINAL - COMANDOS PARA EXECUTAR
+
+===========================================
+OPÇÃO 1: CLOUD SHELL (MAIS FÁCIL)
+===========================================
+
+1. Abra: https://console.cloud.google.com/run?project=305905232437
+
+2. Clique no ícone "Cloud Shell" (terminal no canto superior direito)
+
+3. Cole e execute ESTE COMANDO:
+
+cd ~
+git clone https://github.com/Vinisilva0010/agrismart-brasil.git
+cd agrismart-brasil/backend
+gcloud run deploy agrismart-backend --source . --region southamerica-east1 --allow-unauthenticated --platform managed --set-env-vars GOOGLE_API_KEY=AIzaSyCnBDhU-QUxZCFrsdfcosWDYYm_FDCmTZQ --timeout 300 --memory 512Mi
+
+4. Aguarde 3-5 minutos
+
+5. Teste: https://agrismart-frontend-305905232437.southamerica-east1.run.app
+
+
+===========================================
+OPÇÃO 2: TERMINAL LOCAL (se tiver gcloud)
+===========================================
+
+cd C:\Users\vnspo\OneDrive\Documentos\agrismart-brasil\backend
+
+gcloud run deploy agrismart-backend --source . --region southamerica-east1 --allow-unauthenticated --platform managed --set-env-vars GOOGLE_API_KEY=AIzaSyCnBDhU-QUxZCFrsdfcosWDYYm_FDCmTZQ --timeout 300 --memory 512Mi
+
+Aguarde 3-5 minutos e teste!
+
+
+===========================================
+URLS FINAIS
+===========================================
+
+Frontend: https://agrismart-frontend-305905232437.southamerica-east1.run.app
+Backend:  https://agrismart-backend-305905232437.southamerica-east1.run.app
+API Docs: https://agrismart-backend-305905232437.southamerica-east1.run.app/api/docs
+
+
+===========================================
+APÓS DEPLOY
+===========================================
+
+1. Aguarde 2-3 minutos
+2. Abra: https://agrismart-frontend-305905232437.southamerica-east1.run.app
+3. Force refresh: Ctrl+Shift+R (Windows) ou Cmd+Shift+R (Mac)
+4. Teste o chat - deve funcionar! ✅
+
+
