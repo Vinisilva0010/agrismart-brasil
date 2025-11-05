@@ -2,6 +2,13 @@
 
 Sistema Multi-Agente para Agricultura Inteligente usando Google Gemini 2.0 Flash
 
+## 🌐 URLs de Produção
+
+- **Backend API**: https://agrismart-backend-305905232437.southamerica-east1.run.app
+- **API Docs**: https://agrismart-backend-305905232437.southamerica-east1.run.app/api/docs
+- **Health Check**: https://agrismart-backend-305905232437.southamerica-east1.run.app/health
+- **GitHub**: https://github.com/Vinisilva0010/agrismart-brasil
+
 ## 📋 Visão Geral
 
 AgriSmart Brasil é uma plataforma completa de gestão agrícola que utiliza inteligência artificial multi-agente para fornecer insights precisos e recomendações acionáveis para agricultores brasileiros.
