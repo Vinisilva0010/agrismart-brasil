@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}
+      - CORS_ORIGINS=http://localhost:5173
+      - ENVIRONMENT=development
+    volumes:
+      - ./backend:/app
+    networks:
+      - agrismart-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - agrismart-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+networks:
+  agrismart-network:
+    driver: bridge
+
