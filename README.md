@@ -1,314 +1,120 @@
-# 🌾 AgriSmart Brasil
+AgriSmart Brasil – Multi-Agent AI Platform for Smart Farming
+🚀 Live Deployments
+Frontend (React/Vite, Cloud Run):
+https://agrismart-frontend-305905232437.southamerica-east1.run.app
 
-Sistema Multi-Agente para Agricultura Inteligente usando Google Gemini 2.0 Flash
+Backend (FastAPI/Python, Multi-Agent, Cloud Run):
+https://agrismart-backend-305905232437.southamerica-east1.run.app
 
-## 🌐 URLs de Produção
+API Documentation (Swagger/OpenAPI):
+https://agrismart-backend-305905232437.southamerica-east1.run.app/api/docs
 
-✅ **SISTEMA NO AR - PRONTO PARA USO!**
+Public GitHub:
+https://github.com/Vinisilva0010/agrismart-brasil
 
-- 🌐 **Frontend**: https://agrismart-frontend-305905232437.southamerica-east1.run.app
-- 🔧 **Backend API**: https://agrismart-backend-305905232437.southamerica-east1.run.app
-- 📚 **API Docs**: https://agrismart-backend-305905232437.southamerica-east1.run.app/api/docs
-- ❤️ **Health Check**: https://agrismart-backend-305905232437.southamerica-east1.run.app/health
-- 💻 **GitHub**: https://github.com/Vinisilva0010/agrismart-brasil
+Video Demo:
+<Your YouTube Video Link Here>
 
-## 📋 Visão Geral
+🏗️ Architecture Diagram
+![AgriSmart Architecture Diagram](./agrismart-diagram.png)
 
-AgriSmart Brasil é uma plataforma completa de gestão agrícola que utiliza inteligência artificial multi-agente para fornecer insights precisos e recomendações acionáveis para agricultores brasileiros.
 
-### 🤖 Agentes Especializados
+🌾 What is AgriSmart Brasil?
+AgriSmart Brasil is a cloud-native multi-agent system built for Brazilian agriculture, powered by Google Gemini AI and Google Cloud Platform. Our solution helps farmers with crop management, climate analytics, crop disease detection, water optimization, and productivity forecasting—all delivered as an easy-to-use web app.
 
-1. **Climate Monitor** (Monitor Climático)
-   - Análise de condições climáticas
-   - Recomendações de irrigação baseadas no clima
-   - Previsão de impacto do tempo nas culturas
+🔥 Key Features
+Multi-Agent AI Core: Orchestrates 5+ specialized agents (climate, crop, yield, water, farm manager) through a robust FastAPI backend.
 
-2. **Crop Analyzer** (Analisador de Culturas)
-   - Análise de saúde das culturas via imagem
-   - Identificação de doenças e pragas
-   - Avaliação de deficiências nutricionais
-   - Recomendações de rotação de culturas
+Google Gemini Integration: AI-powered analysis for chat, image diagnostics, and recommendations using Gemini APIs.
 
-3. **Water Optimizer** (Otimizador de Água)
-   - Criação de cronogramas de irrigação otimizados
-   - Cálculo de eficiência hídrica
-   - Detecção de problemas no sistema de irrigação
-   - Recomendações de tecnologia de irrigação
+Modern User Interface: 100% React/Vite frontend for real farm dashboard experience, deployed on Cloud Run for scale and availability.
 
-4. **Yield Predictor** (Preditor de Produção)
-   - Previsão de rendimento de culturas
-   - Análise de lacunas de produtividade
-   - Recomendações de timing de mercado
-   - Otimização de cronograma de plantio
+Smart Data Flow: (Optional) Uses Google Firestore to persist farm data and historical records.
 
-5. **Farm Manager** (Gestor da Fazenda)
-   - Coordenação de todos os agentes
-   - Briefings diários da fazenda
-   - Planos de ação abrangentes
-   - Análise de desempenho da fazenda
-   - Gestão de emergências
+Deployed and Documented: Live endpoints (see above) and full API docs for transparency and reproducibility.
 
-## 🏗️ Arquitetura
+🌎 Why Does It Matter?
+Brazil is a world leader in agriculture, but many farmers lack AI-powered tools for integrated decision-making. AgriSmart fills this gap with:
 
-```
-agrismart-brasil/
-├── backend/                 # API FastAPI + Python 3.11
-│   ├── agents/             # Agentes especializados
-│   ├── api/                # Endpoints FastAPI
-│   └── services/           # Serviços (Firestore, etc.)
-├── frontend/               # React + Vite + Tailwind
-│   └── src/
-│       ├── components/     # Componentes React
-│       └── App.jsx         # App principal
-└── README.md
-```
+AI chat for agricultural Q&A and scenario guidance
 
-## 🚀 Tecnologias
+Automatic weather, yield, and disease analysis
 
-### Backend
-- **FastAPI** - Framework web moderno e rápido
-- **Python 3.11** - Linguagem de programação
-- **Google Gemini 2.0 Flash** - Modelo de IA para os agentes
-- **Google Cloud Firestore** - Banco de dados NoSQL
-- **Uvicorn** - Servidor ASGI
+A scalable, maintainable cloud-native architecture
 
-### Frontend
-- **React 18** - Biblioteca UI
-- **Vite** - Build tool e dev server
-- **Tailwind CSS** - Framework CSS utility-first
-- **Modern JavaScript (ES6+)** - Linguagem
+⚡️ How It Works
+User (Farmer) interacts via web browser
 
-### Deploy
-- **Google Cloud Run** - Plataforma serverless
-- **Docker** - Containerização
+Frontend (React/Vite) displays dashboard and chat, sending requests to backend
 
-## 📦 Instalação
+Backend (FastAPI, multi-agent) handles user input, coordinates agents, and integrates with Google Gemini AI and (optionally) Firestore
 
-### Pré-requisitos
+Gemini AI API is used for natural language/chat and image recognition
 
-- Python 3.11+
-- Node.js 20+
-- Google Cloud Account
-- Google AI API Key
+Firestore (Optional): stores farm, crop, and analytical data
 
-### Backend
+🛠️ Technologies Used
+Frontend: React, Vite, JavaScript (Cloud Run)
 
-```bash
-cd backend
+Backend: Python, FastAPI, Google ADK, Multi-Agent design (Cloud Run)
 
-# Criar ambiente virtual
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# ou
-venv\Scripts\activate  # Windows
+AI: Google Gemini AI API (prompting for chat and image analysis)
 
-# Instalar dependências
-pip install -r requirements.txt
+Database (Optional): Google Firestore
 
-# Configurar variáveis de ambiente
-cp env.example .env
-# Editar .env com suas credenciais
+Infrastructure: Google Cloud Run, GitHub Actions
 
-# Executar servidor
-uvicorn api.main:app --reload --port 8080
-```
+Documentation: OpenAPI/Swagger
 
-### Frontend
+🚦 How To Run Locally
+Frontend Setup:
 
-```bash
+text
 cd frontend
-
-# Instalar dependências
 npm install
+VITE_BACKEND_URL=http://localhost:8080 npm run dev
+Backend Setup:
 
-# Executar em desenvolvimento
-npm run dev
-
-# Build para produção
-npm run build
-```
-
-## 🔑 Configuração
-
-### Variáveis de Ambiente (Backend)
-
-Crie um arquivo `.env` na pasta `backend/`:
-
-```env
-GOOGLE_API_KEY=your_google_ai_api_key_here
-GOOGLE_CLOUD_PROJECT=your_project_id
-GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account-key.json
-PORT=8080
-CORS_ORIGINS=http://localhost:5173,https://yourdomain.com
-ENVIRONMENT=development
-```
-
-### Obter API Key do Google AI
-
-1. Acesse [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Crie uma nova API Key
-3. Copie a chave para o arquivo `.env`
-
-### Configurar Google Cloud Firestore
-
-1. Acesse o [Google Cloud Console](https://console.cloud.google.com)
-2. Crie um novo projeto ou selecione um existente
-3. Ative o Firestore Database
-4. Crie uma Service Account e baixe o JSON de credenciais
-5. Configure o caminho no `.env`
-
-## 🐳 Deploy com Docker
-
-### Backend
-
-```bash
+text
 cd backend
+pip install -r requirements.txt
+python -m api.main
+The default local backend runs at http://localhost:8080 and the frontend at http://localhost:5173
+You can update .env or modify the VITE_BACKEND_URL for your environment.
 
-# Build da imagem
-docker build -t agrismart-backend .
+🤖 Main API Endpoints (see /api/docs for details)
+POST /api/farm/query — Main agent chat endpoint
 
-# Executar container
-docker run -p 8080:8080 --env-file .env agrismart-backend
-```
+POST /api/climate/analyze — Weather and climate analysis
 
-### Frontend
+POST /api/crop/analyze-image — Crop disease/image analysis via Gemini
 
-```bash
-cd frontend
+POST /api/water/irrigation-schedule — Water optimization
 
-# Build da imagem
-docker build -t agrismart-frontend .
+POST /api/yield/predict — Harvest/yield prediction
 
-# Executar container
-docker run -p 8080:8080 agrismart-frontend
-```
+(Full documentation at /api/docs)
 
-## ☁️ Deploy no Google Cloud Run
+🏆 Google Cloud & AI Highlights
+Full multi-service architecture deployed with Google Cloud Run
 
-### Backend
+Multi-agent orchestrator implemented using Google ADK
 
-```bash
-cd backend
+Google Gemini AI API for advanced reasoning and crop image analysis
 
-# Build e push para Google Container Registry
-gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/agrismart-backend
+Optional Firestore NoSQL database for persistent analytics
 
-# Deploy no Cloud Run
-gcloud run deploy agrismart-backend \
-  --image gcr.io/YOUR_PROJECT_ID/agrismart-backend \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-env-vars GOOGLE_API_KEY=your_key_here
-```
+🎥 Demo Video
+Watch how AgriSmart Brasil empowers farmers with AI:
 
-### Frontend
+<Your YouTube Video Link Here>
 
-```bash
-cd frontend
+📄 License
+MIT License
 
-# Build e push
-gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/agrismart-frontend
+🤝 Acknowledgements
+Google Cloud Hackathon Team
 
-# Deploy
-gcloud run deploy agrismart-frontend \
-  --image gcr.io/YOUR_PROJECT_ID/agrismart-frontend \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated
-```
+Agrismart contributors
 
-## 📚 API Endpoints
-
-### Climate Monitor
-- `POST /api/climate/analyze` - Analisar condições climáticas
-- `POST /api/climate/irrigation-recommendation` - Recomendações de irrigação
-- `POST /api/climate/weather-impact` - Prever impacto do clima
-
-### Crop Analyzer
-- `POST /api/crop/analyze-image` - Analisar imagem de cultura
-- `POST /api/crop/upload-image` - Upload e análise de imagem
-- `POST /api/crop/identify-disease` - Identificar doença
-- `POST /api/crop/nutrient-assessment` - Avaliar nutrientes
-- `POST /api/crop/rotation-recommendation` - Recomendar rotação
-
-### Water Optimizer
-- `POST /api/water/irrigation-schedule` - Criar cronograma de irrigação
-- `POST /api/water/efficiency` - Calcular eficiência hídrica
-- `POST /api/water/detect-issues` - Detectar problemas
-- `POST /api/water/technology-recommendation` - Recomendar tecnologia
-
-### Yield Predictor
-- `POST /api/yield/predict` - Prever produção
-- `POST /api/yield/gap-analysis` - Analisar lacunas
-- `POST /api/yield/market-timing` - Timing de mercado
-- `POST /api/yield/planting-schedule` - Otimizar plantio
-
-### Farm Manager
-- `POST /api/farm/daily-briefing` - Briefing diário
-- `POST /api/farm/query` - Consulta geral
-- `POST /api/farm/action-plan` - Criar plano de ação
-- `POST /api/farm/performance` - Analisar desempenho
-- `POST /api/farm/emergency` - Gerenciar emergência
-
-## 🎯 Funcionalidades
-
-### Dashboard
-- Visão geral da fazenda
-- Métricas em tempo real
-- Briefing diário gerado por IA
-- Ações rápidas
-
-### Chat com Agentes
-- Interface conversacional
-- Consulta a múltiplos agentes
-- Respostas contextualizadas
-- Histórico de conversas
-
-### Análise de Imagens
-- Upload de fotos de culturas
-- Detecção de doenças e pragas
-- Análise nutricional
-- Recomendações de tratamento
-
-## 🔒 Segurança
-
-- CORS configurado
-- Validação de entrada com Pydantic
-- Variáveis de ambiente para credenciais
-- HTTPS no Cloud Run
-- Headers de segurança no Nginx
-
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Por favor:
-
-1. Faça um Fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 👥 Autores
-
-AgriSmart Brasil Team
-
-## 🙏 Agradecimentos
-
-- Google AI pela API Gemini 2.0 Flash
-- Comunidade FastAPI
-- Comunidade React
-- Todos os agricultores brasileiros que inspiram este projeto
-
-## 📞 Suporte
-
-Para suporte, abra uma issue no GitHub ou entre em contato via email.
-
----
-
-**Feito com ❤️ para a agricultura brasileira** 🇧🇷
-
+(Any relevant AI or open-source libraries)
